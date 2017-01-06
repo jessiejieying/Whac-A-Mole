@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>打地鼠</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <style type="text/css">
+        *{font-family: "微软雅黑";}
+            #content {
+                width: 960px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            #content>input{width: 80px; height: 40px; color: white; border-radius: 5px; 
+            background: violet; border: none; cursor: pointer;}
+            table {
+                margin: 0 auto;
+            }
+            table:hover {
+                cursor: url('hammer.png'), auto;
+            }
+            td {
+                width: 100px;
+                height: 100px;
+                background-color: pink;
+            }
+            
+            .mouse{ width: 100%; height: 100%; background: url(mouse.png);
+            background-position: -20px -20px;}
+        </style>
+
+    </head>
+    <body>
+        <div id="content">
+            <input type="button" value="开始游戏" onclick="GameStart()">
+            <input type="button" value="结束游戏" onclick="GameOver()">
+            <br /><br />
+           <form name="form1">
+                <label>分数：</label>
+                <input type="text" name="score" size="5">
+                <label>命中率：</label>
+                <input type="text" name="success" size="10">
+                <label>倒计时：</label>
+                <input type="text" name="remtime" size="5">
+            </form>
+            <br />
+            <table>
+                <tr>
+                    <td id="td[0]"></td>
+                    <td id="td[1]"></td>
+                    <td id="td[2]"></td>
+                    <td id="td[3]"></td>
+                    <td id="td[4]"></td>
+                </tr>
+                <tr>
+                    <td id="td[5]"></td>
+                    <td id="td[6]"></td>
+                    <td id="td[7]"></td>
+                    <td id="td[8]"></td>
+                    <td id="td[9]"></td>
+                </tr>
+                <tr>
+                    <td id="td[10]"></td>
+                    <td id="td[11]"></td>
+                    <td id="td[12]"></td>
+                    <td id="td[13]"></td>
+                    <td id="td[14]"></td>
+                </tr>
+                <tr>
+                    <td id="td[15]"></td>
+                    <td id="td[16]"></td>
+                    <td id="td[17]"></td>
+                    <td id="td[18]"></td>
+                    <td id="td[19]"></td>
+                </tr>
+                <tr>
+                    <td id="td[20]"></td>
+                    <td id="td[21]"></td>
+                    <td id="td[22]"></td>
+                    <td id="td[23]"></td>
+                    <td id="td[24]"></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+    <script>
+	    //var td = new Array(),      
+	    playing = false,       
+	    score = 0,             
+	    beat = 0,              
+	    success = 0,           
+	    knock = 0,             
+	    countDown = 30,        
+	    interId = null,        
+	    timeId = null;         
+	
+
+	function GameOver(){
+	    timeStop();
+	    playing = false;
+	    clearMouse();
+	    alert("游戏结束！\n你获得的分数为："+score+"\n命中率为："+success);
+	    success = 0;
+	    score = 0;
+	    knock = 0;
+	    beat = 0;
+	    countDown = 30;
+	}
+	
+
+	function timeShow(){
+	    document.form1.remtime.value = countDown;
+	    if(countDown == 0){
+	        GameOver();
+	        return;
+	    }else{
+	        countDown = countDown-1;
+	        timeId = setTimeout("timeShow()",1000);
+	    }
+	}
+	
+
+	function timeStop(){
+	    clearInterval(interId);//clearInterval()方法返回setInterval()方法的id
+	    clearTimeout(timeId);//clearTime()方法返回setTimeout()的id
+	}
+	
+
+	function show(){
+	    if(playing)
+	    {
+	        var current = Math.floor(Math.random()*25);
+	        document.getElementById("td["+current+"]").innerHTML = '<div class="mouse"></div>';
+	        setTimeout("document.getElementById('td["+current+"]').innerHTML=''",3000);
+	    }
+	}
+	
+
+	function clearMouse(){
+	    for(var i=0;i<=24;i++)
+	    {
+	        document.getElementById("td["+i+"]").innerHTML="";
+	    }
+	}
+	
+
+	var td = document.getElementsByTagName("td");
+	for(var i = 0; i < td.length; i++){
+		td[i].onclick = function(){
+			//console.log(this);
+		    if(playing==false)
+		    {
+		        alert("请点击开始游戏");
+		        return;
+		    }
+		    else
+		    {    
+		         beat +=1;
+		        if(this.innerHTML!="")
+		        {
+		            score += 1;
+		            knock +=1;
+		            success = knock/beat;
+		            document.form1.success.value = success;
+		            document.form1.score.value = score;
+		            
+		            
+		            this.getElementsByClassName("mouse")[0].style.backgroundPosition = "-428px -20px";
+		            var _this = this;
+		            setTimeout(function(){
+		            	_this.innerHTML="";
+		            }, 500)
+		            
+		        }
+		        else
+		        {
+		            score += -1;
+		            success = knock/beat;
+		            document.form1.success.value = success;
+		            document.form1.score.value = score;
+		        }
+		    }
+		}
+	}
+	
+
+	
+
+	function GameStart(){
+	    playing = true;
+	    interId = setInterval("show()",1000);
+	    document.form1.score.value = score;
+	    document.form1.success.value = success;
+	    timeShow();
+	}
+    </script>
+</html>
